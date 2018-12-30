@@ -31,69 +31,37 @@
 // Find the thirteen adjacent digits in the 1000-digit number that have the greatest product. What is the value of this product?
 
 using IntVec = std::vector<int>;
-using IntMatrix = std::vector<IntVec>;
 
-const auto display_int_matrix(const IntMatrix& matrix) noexcept {
-  for(const auto& line: matrix) {
-    for(const auto& item: line) {
-      std::cout << std::setw(2) << item;
-    }
-    std::cout << std::endl;
-  }
-}
+const auto read_int_vector(std::ifstream& infile) noexcept {
+  IntVec vec;
 
-const auto read_int_matrix(std::ifstream& infile) noexcept {
-  IntMatrix matrix;
   std::string line;
   while (std::getline(infile, line)) {
-    IntVec temp;
     for(int i = 0; i < line.size(); i++) {
-      temp.emplace_back(static_cast<int>(line[i] - '0'));
+      vec.emplace_back(static_cast<int>(line[i] - '0'));
     }
-    matrix.emplace_back(std::move(temp));
   }
-  return matrix;
+
+  return vec;
 }
 
-const auto largest_adjacent_product(const IntMatrix& matrix, const int number_of_adjacent_elements) noexcept {
+const auto largest_adjacent_product(const IntVec& vec, const int number_of_adjacent_elements) noexcept {
   long long largest_product = 0;
-  for(int row_id = 0; row_id < matrix.size(); row_id++) {
-    const auto& row = matrix[row_id];
-    for(auto it = row.cbegin(); it != row.cend() - number_of_adjacent_elements; it++) {
-      const auto current_product = std::accumulate(it, it + number_of_adjacent_elements, 1, std::multiplies<>());
-      if(current_product > largest_product) {
-        largest_product = current_product;
-      }
-    }
+
+  for(auto it = vec.cbegin(); it != vec.cend() - number_of_adjacent_elements; it++) {
+    const long long current_product = std::accumulate(it, it + number_of_adjacent_elements, 1, std::multiplies<>());
+    largest_product = std::max(current_product, largest_product);
   }
 
   return largest_product;
 }
 
-const auto rotate_matrix(const IntMatrix& in_matrix) noexcept {
-  IntMatrix matrix;
-  for(int col = 0; col < in_matrix[0].size(); col++) {
-    IntVec temp;
-    for(int row= 0; row< in_matrix.size(); row++) {
-      temp.emplace_back(in_matrix[row][col]); 
-    }
-    matrix.emplace_back(std::move(temp));
-  }
-  return matrix;
-
-}
-
 int main(int argc, char** argv) {
   std::ifstream infile("input.txt");
-  const auto matrix = read_int_matrix(infile);
-  const auto rotated_matrix = rotate_matrix(matrix);
-
-  //display_int_matrix(matrix);
-  //std::cout << std::endl;
-  //display_int_matrix(rotated_matrix);
-
+  const auto vec = read_int_vector(infile);
   constexpr auto number_of_adjacent_elements = 13;
-  const auto result = std::max(largest_adjacent_product(matrix, number_of_adjacent_elements),0LL);//, largest_adjacent_product(rotated_matrix, number_of_adjacent_elements));
+  const auto result = largest_adjacent_product(vec, number_of_adjacent_elements);
+
   std::cout << "Largest adjacent product is: " << result << std::endl;
 
   return EXIT_SUCCESS;
