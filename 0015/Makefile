@@ -1,4 +1,4 @@
-TARGET ?= main
+TARGET ?= main.out
 SRC_DIRS ?= ./
 
 SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
