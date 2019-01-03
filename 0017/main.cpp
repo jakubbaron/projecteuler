@@ -8,12 +8,8 @@
 // 
 // NOTE: Do not count spaces or hyphens. For example, 342 (three hundred and forty-two) contains 23 letters and 115 (one hundred and fifteen) contains 20 letters. The use of "and" when writing out numbers is in compliance with British usage.
 
-
-// this could just be done with maps with ints which would keep the lengths but
-// as for now keeping this for debugging
-
 int main(int argc, char** argv) {
-  const std::map<int, std::string> teens = {
+  static const std::map<int, std::string> teens = {
     {11, "eleven"},
     {12, "twelve"},
     {13, "thirteen"},
@@ -25,7 +21,7 @@ int main(int argc, char** argv) {
     {19, "nineteen"}
   };
 
-  const std::map<int, std::string> tens = {
+  static const std::map<int, std::string> tens = {
     {1, "ten"},
     {2, "twenty"},
     {3, "thirty"},
@@ -37,7 +33,7 @@ int main(int argc, char** argv) {
     {9, "ninety"}
   };
 
-  const std::map<int, std::string> singles = {
+  static const std::map<int, std::string> singles = {
     {1, "one"},
     {2, "two"},
     {3, "three"},
@@ -50,6 +46,7 @@ int main(int argc, char** argv) {
   };
 
   constexpr auto upper_bound = 1000;
+
   const auto HUNDRED_SIZE = std::string{"hundred"}.size();
   const auto AND_SIZE = std::string{"and"}.size();
   int sum = 0;
