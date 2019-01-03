@@ -1,4 +1,63 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <numeric>
+#include <iomanip>
+
+using Vec = std::vector<int>;
+using Triangle = std::vector<Vec>;
+
+const auto read_int_triangle(std::ifstream& infile) {
+  Triangle triangle;
+  std::string line;
+  size_t last_level_size = 0;
+  while (std::getline(infile, line)) {
+    Vec temp_vec;
+    std::stringstream ss;     
+    ss << line;
+    while (!ss.eof()) { 
+      int temp{0};
+      ss >> temp;
+      temp_vec.emplace_back(temp);
+    }
+    if(last_level_size != temp_vec.size() - 1) {
+      throw std::invalid_argument("Input file is invalid, triangle isn't valid");
+    }
+    last_level_size = temp_vec.size();
+    triangle.emplace_back(std::move(temp_vec));
+  }
+  return triangle;
+}
+
+const auto display_int_triangle(const Triangle& triangle) noexcept {
+  for(const auto& line: triangle) {
+    for(const auto& item: line) {
+      std::cout << std::setw(3) << item;
+    }
+    std::cout << std::endl;
+  }
+}
+
+const auto find_best_routes(const Triangle& triangle) noexcept {
+  Triangle best_routes = triangle; //copy the triangle as we'll want to add the cell values to the best routes anyway
+
+  for(int row = 1; row < triangle.size(); row++) {
+    for(int position = 0; position < triangle[row].size(); position++) {
+      const auto previous_row = row - 1;
+      auto top_left = 0;
+      auto top_right = 0;
+      if(position != 0) {
+        top_left = best_routes[previous_row][position - 1];
+      }
+      if(position != best_routes[previous_row].size()) {
+        top_right = best_routes[previous_row][position];
+      }
+      best_routes[row][position] += std::max(top_left, top_right);
+    }
+  }
+  return best_routes;
+}
 
 // By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
 // 
@@ -29,6 +88,10 @@
 // NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route. However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)
 
 int main(int argc, char** argv) {
-
+  std::ifstream infile("input.txt");
+  const auto triangle = read_int_triangle(infile);
+  const auto best_routes = find_best_routes(triangle);
+  const auto best_route = *std::max_element(best_routes[best_routes.size() - 1].cbegin(), best_routes[best_routes.size() - 1].cend());
+  std::cout << "Best route's value is: " << best_route << std::endl;
   return EXIT_SUCCESS;
 }
