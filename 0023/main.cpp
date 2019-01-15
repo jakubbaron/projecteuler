@@ -40,19 +40,35 @@ auto is_abundant_number(int n) noexcept -> bool {
 }
 
 int main(int argc, char** argv) {
-  static auto constexpr upper_bound = 281230;
+  static auto constexpr upper_bound = 28123;
   std::set<int> abundants;
-  std::set<int> non_abundants;
   for(int i = 2; i < upper_bound; i++) {
     if(is_abundant_number(i)) {
       abundants.emplace(i);
-    } else {
-      non_abundants.emplace(i);
+    }
+  }
+
+  long long sum = 0LL;
+  for(int i = 1; i <= upper_bound; i++) {
+    bool sum_it_up = false;
+    for(const auto& abundant: abundants) {
+      int diff = i - abundant;
+      if(diff <= 0) {
+        sum_it_up = true;
+        break;
+      }
+      if(abundants.count(diff)) {
+        sum_it_up = false;    
+        break;
+      }
+    }
+    if(sum_it_up) {
+      sum += i;
     }
   }
 
   std::cout << "sum of abundandts: " << std::accumulate(abundants.begin(), abundants.end(), 0) << std::endl;
-  std::cout << "sum of non_abundandts: " << std::accumulate(non_abundants.begin(), non_abundants.end(), 0) << std::endl;
+  std::cout << "sum of all others: " << sum << std::endl;
 
   return EXIT_SUCCESS;
 }
