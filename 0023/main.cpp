@@ -1,4 +1,8 @@
 #include <iostream>
+#include <vector>
+#include <numeric>
+#include <set>
+#include <cmath>
 
 // A perfect number is a number for which the sum of its proper divisors is exactly equal to the number. For example, the sum of the proper divisors of 28 would be 1 + 2 + 4 + 7 + 14 = 28, which means that 28 is a perfect number.
 // 
@@ -8,7 +12,47 @@
 // 
 // Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
 
+auto get_divisors(int n) noexcept -> std::vector<int>{
+  std::vector<int> divisors;
+  for (int i = 1; i <= sqrt(n); i++)
+  {
+    if (n % i == 0)
+    {
+      divisors.emplace_back(i);
+      const auto n_over_i = n / i;
+      if (n_over_i != i) {
+        divisors.emplace_back(n_over_i);
+      }
+    }
+  }
+
+  return divisors;
+}
+
+auto is_perfect_number(int n) noexcept -> bool {
+  const auto divisors{get_divisors(n)};
+  return std::accumulate(divisors.begin(), divisors.end(), -n) == n;
+}
+
+auto is_abundant_number(int n) noexcept -> bool {
+  const auto divisors{get_divisors(n)};
+  return std::accumulate(divisors.begin(), divisors.end(), -n) > n;
+}
+
 int main(int argc, char** argv) {
+  static auto constexpr upper_bound = 281230;
+  std::set<int> abundants;
+  std::set<int> non_abundants;
+  for(int i = 2; i < upper_bound; i++) {
+    if(is_abundant_number(i)) {
+      abundants.emplace(i);
+    } else {
+      non_abundants.emplace(i);
+    }
+  }
+
+  std::cout << "sum of abundandts: " << std::accumulate(abundants.begin(), abundants.end(), 0) << std::endl;
+  std::cout << "sum of non_abundandts: " << std::accumulate(non_abundants.begin(), non_abundants.end(), 0) << std::endl;
 
   return EXIT_SUCCESS;
 }
