@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 // Euler discovered the remarkable quadratic formula:
 // 
@@ -14,6 +15,14 @@
 // where |n| is the modulus/absolute value of n
 // e.g. |11|=11 and |−4|=4
 // Find the product of the coefficients, a and b, for the quadratic expression that produces the maximum number of primes for consecutive values of n, starting with n=0.
+
+auto find_best_coefficients() noexcept -> const std::pair<int, int> {
+  int a(0), b(0);
+  while(std::abs(a) < 1000 && std::abs(b) <= 1000) {
+
+  }
+  return std::make_pair(a,b);
+}
 
 int main(int argc, char** argv) {
 
