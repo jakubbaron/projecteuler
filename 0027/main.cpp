@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 // Euler discovered the remarkable quadratic formula:
 // 
