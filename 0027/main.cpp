@@ -46,9 +46,9 @@ auto n_primes(int n) noexcept -> const std::set<int> {
 }
 
 struct best_coefficients {
-  int a;
-  int b;
-  int n;
+  int a = 0;
+  int b = 0;
+  int n = 0;
 };
 
 auto formula = [](const int a, const int b, const int n) {
@@ -57,9 +57,6 @@ auto formula = [](const int a, const int b, const int n) {
 
 auto find_best_coefficients() noexcept -> best_coefficients {
   auto best = best_coefficients();
-  best.a = 0;
-  best.b = 0;
-  best.n = 0;
 
   static auto constexpr how_many_primes = 50000;
   std::set<int> primes = n_primes(how_many_primes);
