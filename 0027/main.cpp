@@ -45,17 +45,48 @@ auto n_primes(int n) noexcept -> const std::set<int> {
     return primes;
 }
 
-auto find_best_coefficients() noexcept -> const std::pair<int, int> {
-  int a(0), b(0);
-  while(std::abs(a) < 1000 && std::abs(b) <= 1000) {
+struct best_coefficients {
+  int a;
+  int b;
+  int n;
+};
 
+auto formula = [](const int a, const int b, const int n) {
+  return n * n + a * n + b;
+};
+
+auto find_best_coefficients() noexcept -> best_coefficients {
+  auto best = best_coefficients();
+  best.a = 0;
+  best.b = 0;
+  best.n = 0;
+
+  static auto constexpr how_many_primes = 50000;
+  std::set<int> primes = n_primes(how_many_primes);
+
+  for(int a = -1000; a <= 1000; a++) {
+    for(int b = -1000; b <= 1000; b++) {
+      bool broken_consecutiveness = false;
+      int n = 0;
+      while(!broken_consecutiveness) {
+        if(!primes.count(formula(a, b, n))) {
+          broken_consecutiveness = true;
+        }
+        n++;
+      }
+      if(best.n < n) {
+        best.n = n;
+        best.a = a;
+        best.b = b;
+      }
+    }
   }
-  return std::make_pair(a,b);
+
+  return best;
 }
 
 int main(int argc, char** argv) {
-  static auto constexpr how_many_primes = 10000;
-  std::set<int> primes = n_primes(how_many_primes);
-
+  const auto best = find_best_coefficients();
+  std::cout << "a: " << best.a << " b: " << best.b << " n: " << best.n << std::endl;
   return EXIT_SUCCESS;
 }
