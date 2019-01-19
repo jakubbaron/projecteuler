@@ -17,6 +17,28 @@
 // e.g. |11|=11 and |−4|=4
 // Find the product of the coefficients, a and b, for the quadratic expression that produces the maximum number of primes for consecutive values of n, starting with n=0.
 
+auto is_prime(int n) noexcept {
+  for(int i = 2; i < sqrt(n) + 1; i++) {
+    if (n % i == 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+auto nth_prime(int n) noexcept {
+    int candidate = 2;
+    int count = 1;
+    while(count < n) {
+      candidate++;
+      if(is_prime(candidate)) {
+        count++;
+      }
+    }
+
+    return candidate;
+}
+
 auto find_best_coefficients() noexcept -> const std::pair<int, int> {
   int a(0), b(0);
   while(std::abs(a) < 1000 && std::abs(b) <= 1000) {
