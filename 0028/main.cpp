@@ -26,10 +26,13 @@ auto form_a_spiral = [](const int size) -> Matrix {
   int current_element = 1;
   int col = mid;
   int row = mid;
-  int last_length = 1;
+  int current_level = 0;
 
   while(current_element <= elements) {
-    matrix[col][row] = current_element++;
+    for(int i = col - current_level; i < col + current_level; i++) {
+      matrix[i][row] = current_element++;
+    }
+    current_element++;
   }
 
   return matrix;
