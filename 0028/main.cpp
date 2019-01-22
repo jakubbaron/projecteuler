@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 // Starting with the number 1 and moving to the right in a clockwise direction a 5 by 5 spiral is formed as follows:
 // 
@@ -19,9 +20,8 @@ using Matrix = std::vector<IntVec>;
 auto display_matrix = [](const Matrix& matrix) -> void {
   for(int col = 0; col < matrix.size(); col++) { 
     for(int row = 0; row < matrix[col].size(); row++) {
-      std::cout << matrix[col][row] << " ";
-    }
-    std::cout << std::endl;
+      std::cout << std::setw(3) << matrix[col][row] << " ";
+    } std::cout << std::endl;
   }
   std::cout << std::endl;
 };
@@ -31,6 +31,11 @@ auto form_a_spiral = [](const int size) -> Matrix {
   for(int i = 0; i < size; i++) {
     matrix.emplace_back(IntVec(size, 0));
   }
+  if(size % 2 != 1) {
+    std::cout << "Not supported size, only odd sizes are acceptable" << std::endl;
+    return matrix;
+  }
+
   int mid = size / 2;
   int elements = size * size;
   int current_element = 1;
@@ -42,51 +47,52 @@ auto form_a_spiral = [](const int size) -> Matrix {
   int number_of_elements = 2;
   col++;
   while(current_element <= elements) {
-    // Right -> start?
     // Down
-    std::cout << "NEXTLOOP" << std::endl;
-    std::cout << "DOWN" << std::endl;
     for(int i = 0; i < number_of_elements; i++) {
       matrix[row][col] = current_element++;
       row++;
-      display_matrix(matrix);
     }
     // Left
-    std::cout << "LEFT" << std::endl;
     row--;
     col--;
     for(int i = 0; i < number_of_elements; i++) {
       matrix[row][col] = current_element++;
       col--;
-      display_matrix(matrix);
     }
     col++;
     row--;
     // Up
-    std::cout << "UP" << std::endl;
     for(int i = 0; i < number_of_elements; i++) {
       matrix[row][col] = current_element++;
       row--;
-      display_matrix(matrix);
     }
     // Right
     row++;
     col++;
-    std::cout << "RIGHT" << std::endl;
     for(int i = 0; i< number_of_elements; i++) {
       matrix[row][col] = current_element++;
       col++;
-      display_matrix(matrix);
     }
-    number_of_elements *=2 ;
+    number_of_elements += 2 ;
   }
 
   return matrix;
 };
 
+auto sum_diagonals = [](const Matrix& matrix) -> uint32_t {
+  //TODO check if it's a square?
+  uint32_t sum = 0;
+  for(int i = 0; i < matrix.size(); i++) {
+    sum += matrix[i][i] + matrix[matrix.size() - i - 1][i];
+  }
+  
+  return sum - 1 /* mid point counter twice */;
+};
+
 int main(int argc, char** argv) {
-  Matrix matrix = form_a_spiral(5);
-  display_matrix(matrix);
+  Matrix matrix = form_a_spiral(1001);
+  //display_matrix(matrix);
+  std::cout << "Sum of diagonals: " << sum_diagonals(matrix) << std::endl;
 
   return EXIT_SUCCESS;
 }
