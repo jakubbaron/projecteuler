@@ -16,6 +16,16 @@
 using IntVec = std::vector<int>;
 using Matrix = std::vector<IntVec>;
 
+auto display_matrix = [](const Matrix& matrix) -> void {
+  for(int col = 0; col < matrix.size(); col++) { 
+    for(int row = 0; row < matrix[col].size(); row++) {
+      std::cout << matrix[col][row] << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << "NEXT" << std::endl;
+};
+
 auto form_a_spiral = [](const int size) -> Matrix {
   Matrix matrix;
   for(int i = 0; i < size; i++) {
@@ -24,27 +34,54 @@ auto form_a_spiral = [](const int size) -> Matrix {
   int mid = size / 2;
   int elements = size * size;
   int current_element = 1;
+  matrix[mid][mid] = current_element++;
   int col = mid;
   int row = mid;
-  int current_level = 0;
-
+  
+  //how many elements to insert per rotation
+  int number_of_elements = 2;
+  col++;
   while(current_element <= elements) {
-    for(int i = col - current_level; i < col + current_level; i++) {
-      matrix[i][row] = current_element++;
+    // Right -> start?
+    // Down
+    std::cout << "DOWN" << std::endl;
+    for(int i = 0; i < number_of_elements; i++) {
+      matrix[row][col] = current_element++;
+      row++;
+      display_matrix(matrix);
     }
-    current_element++;
+    // Left
+    std::cout << "LEFT" << std::endl;
+    row--;
+    col--;
+    for(int i = 0; i < number_of_elements; i++) {
+      matrix[row][col] = current_element++;
+      col--;
+      display_matrix(matrix);
+    }
+    col++;
+    row--;
+    // Up
+    std::cout << "UP" << std::endl;
+    for(int i = 0; i < number_of_elements; i++) {
+      matrix[row][col] = current_element++;
+      row--;
+      display_matrix(matrix);
+    }
+    // Right
+    row++;
+    col++;
+    std::cout << "RIGHT" << std::endl;
+    for(int i = 0; i< number_of_elements; i++) {
+      matrix[row][col] = current_element++;
+      col++;
+      display_matrix(matrix);
+    }
+    row++;
+    number_of_elements++;
   }
 
   return matrix;
-};
-
-auto display_matrix = [](const Matrix& matrix) -> void {
-  for(int col = 0; col < matrix.size(); col++) { 
-    for(int row = 0; row < matrix[col].size(); row++) {
-      std::cout << matrix[col][row] << " ";
-    }
-    std::cout << std::endl;
-  }  
 };
 
 int main(int argc, char** argv) {
