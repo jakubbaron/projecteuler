@@ -23,7 +23,7 @@ auto display_matrix = [](const Matrix& matrix) -> void {
     }
     std::cout << std::endl;
   }
-  std::cout << "NEXT" << std::endl;
+  std::cout << std::endl;
 };
 
 auto form_a_spiral = [](const int size) -> Matrix {
@@ -44,6 +44,7 @@ auto form_a_spiral = [](const int size) -> Matrix {
   while(current_element <= elements) {
     // Right -> start?
     // Down
+    std::cout << "NEXTLOOP" << std::endl;
     std::cout << "DOWN" << std::endl;
     for(int i = 0; i < number_of_elements; i++) {
       matrix[row][col] = current_element++;
@@ -77,8 +78,7 @@ auto form_a_spiral = [](const int size) -> Matrix {
       col++;
       display_matrix(matrix);
     }
-    row++;
-    number_of_elements++;
+    number_of_elements *=2 ;
   }
 
   return matrix;
