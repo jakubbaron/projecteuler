@@ -28,8 +28,6 @@ auto min_number = [](int powers) -> int {
 };
 
 auto max_number = [](int powers) -> int {
-  size_t max_digits = 0;
-  size_t last_seen_digits = 0;
   return std::pow(9, powers) * powers;
 };
 
