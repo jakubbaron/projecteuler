@@ -35,21 +35,22 @@ auto how_many_ways_for_pounds(const unsigned int pounds) noexcept -> size_t {
       std::cout << "Testing coin[" << coin << "] needed pences [" << needed_pences << "] ways[" << ways << "]" << std::endl;
       auto coin_it = available_coins.find(coin);
       if(coin_it == available_coins.end()) {
-        std::cout << "Nope" << std::endl;
+        std::cout << "Coin[" << coin << "] no longer available" <<  std::endl;
         continue;
       }
 
       auto amount_of_coins = coin_it->second;
-      while(coin * amount_of_coins >= needed_pences && amount_of_coins > 0) {
+      //std::cout << (coin * amount_of_coins) << " " << needed_pences << " " << amount_of_coins << std::endl;
+      while(coin <= needed_pences && amount_of_coins > 0) {
         needed_pences -= coin; 
         amount_of_coins--;
-        std::cout << "Testing coin[" << coin << "] needed pences [" << needed_pences << "] left availavle[" << amount_of_coins << "]" << std::endl;
+        std::cout << "Coin[" << coin << "] needed pences [" << needed_pences << "] left coins availavle[" << amount_of_coins << "]" << std::endl;
       } 
 
-      if((needed_pences == 0 && amount_of_coins == 0) || (coin > needed_pences)) {
+      if((needed_pences == 0 && amount_of_coins == 0)/* || (coin > needed_pences)*/) {
         available_coins[coin]--;
         if(available_coins[coin] == 0) {
-          std::cout << "Out of [" << coin << "]" << std::endl;
+          std::cout << "Out of [" << coin << "] coins" << std::endl;
           available_coins.erase(coin);
         }
       }
@@ -58,6 +59,12 @@ auto how_many_ways_for_pounds(const unsigned int pounds) noexcept -> size_t {
         ways++;
         break;
       }
+    }
+    if(available_coins[100] > 0 && available_coins[50] != 4) {
+      for(const auto& item: available_coins) {
+        std::cout << item.first << " " << item.second << std::endl; 
+      }
+      break;
     }
   }
   return ways;
