@@ -11,66 +11,53 @@
 //1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
 //How many different ways can £2 be made using any number of coins?
 
-auto how_many_ways_for_pounds(const unsigned int pounds) noexcept -> size_t {
-  unsigned int pences = pounds * 100;
-  static std::vector<unsigned int> coins = {200, 100, 50, 20, 5, 2, 1}; 
-  std::map<unsigned int, unsigned int> available_coins = {
-    {200, pences/200},
-    {100, pences/100},
-    {50, pences/50},
-    {20, pences/20},
-    {5, pences/5}, 
-    {2, pences/2},
-    {1, pences/1}
-  };
+// https://www.mathblog.dk/project-euler-31-combinations-english-currency-denominations/
 
-//  for(const auto& item: available_coins) {
-//    std::cout << item.first << " " << item.second << std::endl; 
-//  }
+// we actually just need to count in how many ways we can build each of the
+// coin's value
 
-  size_t ways = 0;
-  while(!available_coins.empty()) {
-    auto needed_pences = pences;  
-    for(const auto& coin: coins) {
-      std::cout << "Testing coin[" << coin << "] needed pences [" << needed_pences << "] ways[" << ways << "]" << std::endl;
-      auto coin_it = available_coins.find(coin);
-      if(coin_it == available_coins.end()) {
-        std::cout << "Coin[" << coin << "] no longer available" <<  std::endl;
-        continue;
-      }
+// Let's start with 5p
+// 2p can be made in 2 ways:
+// 1x2p 0x1p
+// 0x2p 2x1p
+// 5p can be made in 4 ways:
+// 1x5p 0x2p 0x1p
+// 0x5p 2x2p 1x1p
+// 0x5p 1x2p 3x1p
+// 0x5p 0x2p 5x1p
+// 10p can be made in 11 ways:
+// 1x10p 0x5p 0x2p 0x1p
+// 0x10p 2x5p 0x2p 0x1p
+// 0x10p 1x5p 2x2p 1x1p
+// 0x10p 1x5p 1x2p 3x1p
+// 0x10p 1x5p 0x2p 5x1p
+// 0x10p 0x5p 5x2p 0x1p
+// 0x10p 0x5p 4x2p 2x1p
+// 0x10p 0x5p 3x2p 4x1p
+// 0x10p 0x5p 2x2p 6x1p
+// 0x10p 0x5p 1x2p 8x1p
+// 0x10p 0x5p 0x2p 10x1p
 
-      auto amount_of_coins = coin_it->second;
-      //std::cout << (coin * amount_of_coins) << " " << needed_pences << " " << amount_of_coins << std::endl;
-      while(coin <= needed_pences && amount_of_coins > 0) {
-        needed_pences -= coin; 
-        amount_of_coins--;
-        std::cout << "Coin[" << coin << "] needed pences [" << needed_pences << "] left coins availavle[" << amount_of_coins << "]" << std::endl;
-      } 
+auto how_many_ways_for_pounds(const unsigned int pences) noexcept -> size_t {
+  static const std::vector<unsigned int> coins = { 1, 2, 5, 10, 20, 50, 100, 200 };
+  if(coins.size() != 8) {
+    std::cerr << "Wrong coins size" << std::endl;
+    return 0;
+  }
 
-      if((needed_pences == 0 && amount_of_coins == 0)/* || (coin > needed_pences)*/) {
-        available_coins[coin]--;
-        if(available_coins[coin] == 0) {
-          std::cout << "Out of [" << coin << "] coins" << std::endl;
-          available_coins.erase(coin);
-        }
-      }
+  std::vector<unsigned int> ways(static_cast<size_t>(pences + 1), 0);
+  ways[0] = 1;
 
-      if(needed_pences == 0) {
-        ways++;
-        break;
-      }
-    }
-    if(available_coins[100] > 0 && available_coins[50] != 4) {
-      for(const auto& item: available_coins) {
-        std::cout << item.first << " " << item.second << std::endl; 
-      }
-      break;
+  for(int i = 0; i < coins.size(); i++) {
+    for(int j = coins[i]; j <= pences; j++) {
+      ways[j] += ways[j - coins[i]];
     }
   }
-  return ways;
+
+  return ways[pences];
 }
 
 int main(int argc, char** argv) {
-  std::cout << "Ways to made 2 pounds: " << how_many_ways_for_pounds(2) << std::endl; 
+  std::cout << "Ways to made 2 pounds: " << how_many_ways_for_pounds(200) << std::endl; 
   return EXIT_SUCCESS;
 }
