@@ -6,6 +6,27 @@
 // 
 // What 12-digit number do you form by concatenating the three terms in this sequence?
 
+auto is_prime(int n) noexcept -> bool {
+  for(int i = 2; i < sqrt(n) + 1; i++) {
+    if (n % i == 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+auto primes_below(int n) noexcept -> const std::set<int> {
+    std::set<int> primes;
+    primes.emplace(2);
+    for(int candidate = 2; candidate <= n; candidate++) {
+      if(is_prime(candidate)) {
+        primes.emplace(candidate);
+      }
+    }
+
+    return primes;
+}
+
 int main(int argc, char** argv) {
 
   return EXIT_SUCCESS;
