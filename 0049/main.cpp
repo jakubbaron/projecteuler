@@ -1,7 +1,8 @@
 #include <iostream>
 #include <cmath>
-#include <set>
+#include <unordered_set>
 #include <map>
+#include <vector>
 
 // The arithmetic sequence, 1487, 4817, 8147, in which each of the terms increases by 3330, is unusual in two ways: (i) each of the three terms are prime, and, (ii) each of the 4-digit numbers are permutations of one another.
 // 
@@ -18,8 +19,8 @@ auto is_prime(int n) noexcept -> bool {
   return true;
 }
 
-auto primes_with_number_of_digits(size_t expected_digits) noexcept -> const std::set<int> {
-    std::set<int> primes;
+auto primes_with_number_of_digits(size_t expected_digits) noexcept -> const std::unordered_set<int> {
+    std::unordered_set<int> primes;
     for(int candidate = std::pow(10, expected_digits - 1); candidate < std::pow(10, expected_digits); candidate++) {
       if(is_prime(candidate)) {
         primes.emplace(candidate);
@@ -29,19 +30,36 @@ auto primes_with_number_of_digits(size_t expected_digits) noexcept -> const std:
     return primes;
 }
 
-int main(int argc, char** argv) {
-  const auto primes = primes_with_number_of_digits(4);
-  std::map<int, std::map<int, int> > distances;
-  for(const auto& prime: primes) {
-    for(const auto& prime2: primes) {
-      distances[prime][std::abs(prime-prime2)]++;
+auto are_numbers_permutations_of_one_another(const std::vector<int> numbers) noexcept -> bool{
+  if(numbers.empty()) {
+    return false;
+  }
+
+  auto ref = std::to_string(numbers.at(0));
+  std::sort(ref.begin(), ref.end());
+  for(const auto& number: numbers) {
+    auto str_number = std::to_string(number);
+    std::sort(begin(str_number), end(str_number));
+    if(ref != str_number) {
+      return false;
     }
   }
-  for(const auto& item: distances) {
-    for(const auto& distance: item.second) {
-      const auto& distance_count = distance.second;
-      if(distance_count > 2) {
-        std::cout << "Prime: " << item.first << " distance: " << distance.first << " count: " << distance_count << std::endl;
+  return true;
+}
+
+int main(int argc, char** argv) {
+  const auto primes = primes_with_number_of_digits(4);
+  for(const auto& prime: primes) {
+    for(const auto& prime2: primes) {
+      const auto distance = std::abs(prime2 - prime);
+      if(distance == 0) {
+        continue;
+      }
+      const auto min_prime = std::min(prime, prime2);
+      if(primes.count(min_prime + distance) && primes.count(min_prime + distance + distance)) {
+        if(are_numbers_permutations_of_one_another({min_prime, min_prime + distance, min_prime + distance + distance})) { 
+          std::cout << min_prime << " " << min_prime + distance << " " << (min_prime + distance + distance) << std::endl;
+        }
       }
     }
   }
